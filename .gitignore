@@ -1,0 +1,18 @@
+# Gradle / Android
+.gradle/
+build/
+**/build/
+local.properties
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+
+# Kotlin
+.kotlin/
+
+# macOS / IDE
+.DS_Store
+.idea/
+*.iml
