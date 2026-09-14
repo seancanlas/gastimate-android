@@ -1,8 +1,11 @@
 package ca.gastimate.app
 
+import ca.gastimate.app.data.AddressParts
 import ca.gastimate.app.data.ApiResult
 import ca.gastimate.app.data.GastimateApi
 import ca.gastimate.app.data.PriceFormat
+import ca.gastimate.app.data.Station
+import ca.gastimate.app.ui.stationAddressLines
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -106,6 +109,34 @@ class GastimateApiTest {
         )
         val result = api.estimate(lat = null, lng = null)
         assertTrue((result as ApiResult.Failure).message.contains("Provide postal_code"))
+    }
+
+    @Test
+    fun `station address splits into street city-province and country-postal lines`() {
+        val st = Station(
+            price = 194.9,
+            address = "raw fallback",
+            address_parts = AddressParts(
+                line1 = "415 Blvd Marcel-Laurin  ",
+                city = "Saint-Laurent",
+                region = "QC",
+                postal_code = "H4M 2L8",
+                country = "CA",
+            ),
+        )
+        assertEquals(
+            listOf("415 Blvd Marcel-Laurin", "Saint-Laurent, QC", "CA H4M 2L8"),
+            stationAddressLines(st),
+        )
+
+        val noCountry = st.copy(address_parts = st.address_parts?.copy(country = ""))
+        assertEquals(
+            listOf("415 Blvd Marcel-Laurin", "Saint-Laurent, QC", "H4M 2L8"),
+            stationAddressLines(noCountry),
+        )
+
+        val legacy = Station(price = 1.0, address = "415 Blvd Marcel-Laurin, Saint-Laurent")
+        assertEquals(listOf("415 Blvd Marcel-Laurin, Saint-Laurent"), stationAddressLines(legacy))
     }
 
     @Test

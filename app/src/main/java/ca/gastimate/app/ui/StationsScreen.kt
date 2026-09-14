@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -158,29 +160,36 @@ private fun StationCard(
             ),
         ),
     ) {
-        // Initial card design: two sibling columns — text left, price right.
-        // The heart (favorites entry point) tops the right column.
+        // Text left, price lane right; IntrinsicSize.Min lets the price lane
+        // fill the card height so the price sits on the card's y-axis.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(IntrinsicSize.Min)
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .clickable { openInMaps(context, station) },
             ) {
-                Text(
-                    station.name.ifBlank { station.brand ?: "Gas station" },
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (station.address.isNotBlank()) {
+                // 32dp row matches the heart button: title and heart share
+                // the same x-axis.
+                Row(
+                    modifier = Modifier.height(32.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        station.address,
+                        station.name.ifBlank { station.brand ?: "Gas station" },
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                stationAddressLines(station).forEach { line ->
+                    Text(
+                        line,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -205,13 +214,14 @@ private fun StationCard(
                 }
             }
             Spacer(Modifier.width(12.dp))
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
+            // Heart top-right (16dp via the row padding, mirroring the
+            // title); price centered on the card's y-axis.
+            Box(modifier = Modifier.fillMaxHeight()) {
                 IconButton(
                     onClick = { onToggleFavorite(station.station_id) },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(32.dp),
                 ) {
                     Icon(
                         if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -222,24 +232,48 @@ private fun StationCard(
                         modifier = Modifier.size(18.dp),
                     )
                 }
-                Text(
-                    PriceFormat.displayPrice(station.price, station.unit),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
-                )
-                station.cash_price?.let { cash ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    modifier = Modifier.align(Alignment.Center),
+                ) {
                     Text(
-                        PriceFormat.displayPrice(cash, station.unit) + " cash",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        PriceFormat.displayPrice(station.price, station.unit),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
                         maxLines = 1,
                     )
+                    station.cash_price?.let { cash ->
+                        Text(
+                            PriceFormat.displayPrice(cash, station.unit) + " cash",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+// Street / City, Province / Country Postal (or just Postal). Falls back
+// to the raw single-line address when the backend sends no parts.
+internal fun stationAddressLines(station: Station): List<String> {
+    val parts = station.address_parts
+    if (parts != null) {
+        val cityProvince = listOf(parts.city.trim(), parts.region.trim())
+            .filter { it.isNotEmpty() }
+            .joinToString(", ")
+        val countryPostal = listOf(parts.country.trim(), parts.postal_code.trim())
+            .filter { it.isNotEmpty() }
+            .joinToString(" ")
+        val lines = listOf(parts.line1.trim(), cityProvince, countryPostal)
+            .filter { it.isNotEmpty() }
+        if (lines.isNotEmpty()) return lines
+    }
+    return station.address.takeIf { it.isNotBlank() }?.let(::listOf) ?: emptyList()
 }
 
 // Opens the station in the user's default maps app via a geo: URI.
