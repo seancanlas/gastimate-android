@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,10 +41,10 @@ fun HomeScreen(
             EstimateCard(est)
             if (state.loadingEstimate) {
                 Spacer(Modifier.height(12.dp))
-                CircularProgressIndicator(strokeWidth = 2.dp)
+                GasPumpLoader(Modifier.size(28.dp))
             }
         } else if (state.loadingEstimate) {
-            CircularProgressIndicator()
+            GasPumpLoader(Modifier.size(64.dp))
             Spacer(Modifier.height(16.dp))
             Text("Loading today's gas price…")
         } else {
@@ -63,10 +62,13 @@ fun HomeScreen(
             enabled = !state.refreshingLocation,
         ) {
             if (state.refreshingLocation) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(18.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                // The button is disabled while refreshing, so the pump sits on
+                // the disabled container (onSurface@12%), not the green one:
+                // hose in onSurface, gas in primary — visible in both themes.
+                GasPumpLoader(
+                    Modifier.size(22.dp),
+                    frameColor = MaterialTheme.colorScheme.onSurface,
+                    gasColor = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(Modifier.size(8.dp))
             }

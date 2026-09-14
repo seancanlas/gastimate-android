@@ -25,7 +25,6 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +51,7 @@ fun StationsScreen(
         if (orderedStations.isEmpty() && state.loadingStations) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator()
+                    GasPumpLoader(Modifier.size(64.dp))
                     Spacer(Modifier.height(16.dp))
                     Text("Finding stations near you…")
                 }
