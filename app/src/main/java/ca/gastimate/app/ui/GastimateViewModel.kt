@@ -79,7 +79,10 @@ class GastimateViewModel(private val api: GastimateApi) : ViewModel() {
                 }
             } else {
                 _state.update { it.copy(lat = fix.first, lng = fix.second, located = true) }
-                fetchEstimate(fix.first, fix.second)
+                // Forced: a default-postal estimate may still be in flight
+                // from loadDefault() (cold open fires both). The live call's
+                // slow pipeline finishes last, so it wins over the default.
+                fetchEstimate(fix.first, fix.second, force = true)
                 fetchStations(fix.first, fix.second)
                 _state.update { it.copy(refreshingLocation = false) }
             }
@@ -96,8 +99,8 @@ class GastimateViewModel(private val api: GastimateApi) : ViewModel() {
 
     fun clearMessage() = _state.update { it.copy(message = null) }
 
-    private fun fetchEstimate(lat: Double?, lng: Double?, postalCode: String? = null) {
-        if (_state.value.loadingEstimate) return
+    private fun fetchEstimate(lat: Double?, lng: Double?, postalCode: String? = null, force: Boolean = false) {
+        if (!force && _state.value.loadingEstimate) return
         _state.update { it.copy(loadingEstimate = true, message = null) }
         viewModelScope.launch {
             when (val r = api.estimate(lat, lng, postalCode)) {
