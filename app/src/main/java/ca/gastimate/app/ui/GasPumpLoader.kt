@@ -9,6 +9,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -43,6 +44,8 @@ fun GasPumpLoader(
             animationSpec = infiniteRepeatable(tween(900, easing = LinearEasing)),
             label = "dash-phase",
         )
+    val hose = remember { Path() }
+    val dashIntervals = remember { floatArrayOf(1f, 1f) }
     Canvas(modifier.semantics { this.contentDescription = contentDescription }) {
         val s = min(size.width, size.height)
         // Stroke floors: sub-pixel strokes vanish on mdpi screens.
@@ -93,13 +96,17 @@ fun GasPumpLoader(
         )
 
         // Hose: exits the body's right side, arcs right and down to the nozzle.
-        val hose = Path().apply {
+        // Path rebuilt per draw from the current canvas size.
+        hose.rewind()
+        hose.apply {
             moveTo(0.50f * s, 0.18f * s)
             cubicTo(0.86f * s, 0.18f * s, 0.92f * s, 0.58f * s, 0.70f * s, 0.66f * s)
         }
         drawPath(hose, frame, style = Stroke(width = (0.06f * s).coerceAtLeast(minStroke), cap = StrokeCap.Round))
         // Gas: dashes flowing toward the nozzle, one dash period per cycle.
         val dash = 0.055f * s
+        dashIntervals[0] = dash
+        dashIntervals[1] = dash
         drawPath(
             hose,
             gas,
@@ -107,7 +114,7 @@ fun GasPumpLoader(
                 width = (0.03f * s).coerceAtLeast(minStroke),
                 cap = StrokeCap.Round,
                 pathEffect = PathEffect.dashPathEffect(
-                    floatArrayOf(dash, dash),
+                    dashIntervals,
                     phase = -phase * 2f * dash,
                 ),
             ),

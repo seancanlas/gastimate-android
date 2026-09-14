@@ -28,10 +28,17 @@
         android:strokeLineCap="round"
         android:pathData="M60.1,37.82 C79.54,37.82 82.78,59.42 70.9,63.74" />
 
-    <!-- Nozzle head + spout -->
+    <!-- Nozzle head -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M69.82,60.48 H75.22 A1.08,1.08 0 0 1 76.3,61.56 V69.12 A1.08,1.08 0 0 1 75.22,70.2 H69.82 A1.08,1.08 0 0 1 68.74,69.12 V61.56 A1.08,1.08 0 0 1 69.82,60.48 Z M68.74,69.12 L64.96,73.44" />
+        android:pathData="M69.82,60.48 H75.22 A1.08,1.08 0 0 1 76.3,61.56 V69.12 A1.08,1.08 0 0 1 75.22,70.2 H69.82 A1.08,1.08 0 0 1 68.74,69.12 V61.56 A1.08,1.08 0 0 1 69.82,60.48 Z" />
+
+    <!-- Nozzle spout: stroked, since a bare line subpath on a fill-only path renders nothing -->
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.43"
+        android:strokeLineCap="round"
+        android:pathData="M68.74,69.12 L64.96,73.44" />
 
     <!-- Body outline (white fill so the green screen tint reads as inset) -->
     <path
@@ -40,7 +47,7 @@
 
     <!-- Screen: background green shows through as the pump's display -->
     <path
-        android:fillColor="#FF0B3D2E"
+        android:fillColor="@color/ic_launcher_background"
         android:pathData="M42.82,35.66 H55.78 A1.62,1.62 0 0 1 57.4,37.28 V45.92 A1.62,1.62 0 0 1 55.78,47.54 H42.82 A1.62,1.62 0 0 1 41.2,45.92 V37.28 A1.62,1.62 0 0 1 42.82,35.66 Z" />
 
     <!-- Panel bar -->
