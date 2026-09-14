@@ -1,17 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Fuel pump glyph, white on transparent, inset for adaptive-icon safe zone. -->
+<!-- Same gas pump as the GasPumpLoader loading icon (NC-10): pump body with
+     screen, hose arcing to a nozzle, gas stream inside the hose. Foreground
+     layer of the adaptive launcher icon; white on the deep-green background.
+     Glyph optically centered: area-weighted centroid at (54,54). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <group
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:translateX="27"
-        android:translateY="27">
-        <path
-            android:fillColor="#FFFFFFFF"
-            android:pathData="M20,8 L56,8 Q60,8 60,12 L60,88 Q60,92 56,92 L20,92 Q16,92 16,88 L16,12 Q16,8 20,8 Z M22,20 L54,20 L54,36 L22,36 Z M24,48 L30,48 L30,80 L24,80 Z M68,20 L80,32 L80,60 Q80,68 72,68 L72,80 L64,80 L64,44 Q64,36 72,36 Q80,36 80,44 L80,56 M70,12 L76,6 M74,10 L78,14" />
-    </group>
+
+    <!-- Base -->
+    <path
+        android:fillColor="#66FFFFFF"
+        android:pathData="M35.26,72.36 A1.08,1.08 0 0 1 36.34,71.28 H61.18 A1.08,1.08 0 0 1 62.26,72.36 V75.6 A1.08,1.08 0 0 1 61.18,76.68 H36.34 A1.08,1.08 0 0 1 35.26,75.6 Z" />
+
+    <!-- Hose -->
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.24"
+        android:strokeLineCap="round"
+        android:pathData="M60.1,37.82 C79.54,37.82 82.78,59.42 70.9,63.74" />
+
+    <!-- Gas inside the hose -->
+    <path
+        android:strokeColor="#FF8FD8AE"
+        android:strokeWidth="1.62"
+        android:strokeLineCap="round"
+        android:pathData="M60.1,37.82 C79.54,37.82 82.78,59.42 70.9,63.74" />
+
+    <!-- Nozzle head + spout -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M69.82,60.48 H75.22 A1.08,1.08 0 0 1 76.3,61.56 V69.12 A1.08,1.08 0 0 1 75.22,70.2 H69.82 A1.08,1.08 0 0 1 68.74,69.12 V61.56 A1.08,1.08 0 0 1 69.82,60.48 Z M68.74,69.12 L64.96,73.44" />
+
+    <!-- Body outline (white fill so the green screen tint reads as inset) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M40.66,31.34 H57.94 A3.24,3.24 0 0 1 61.18,34.58 V69.14 A3.24,3.24 0 0 1 57.94,72.38 H40.66 A3.24,3.24 0 0 1 37.42,69.14 V34.58 A3.24,3.24 0 0 1 40.66,31.34 Z" />
+
+    <!-- Screen: background green shows through as the pump's display -->
+    <path
+        android:fillColor="#FF0B3D2E"
+        android:pathData="M42.82,35.66 H55.78 A1.62,1.62 0 0 1 57.4,37.28 V45.92 A1.62,1.62 0 0 1 55.78,47.54 H42.82 A1.62,1.62 0 0 1 41.2,45.92 V37.28 A1.62,1.62 0 0 1 42.82,35.66 Z" />
+
+    <!-- Panel bar -->
+    <path
+        android:fillColor="#B3FFFFFF"
+        android:pathData="M42.12,51.86 H56.48 A0.92,0.92 0 0 1 57.4,52.78 V52.83 A0.92,0.92 0 0 1 56.48,53.75 H42.12 A0.92,0.92 0 0 1 41.2,52.83 V52.78 A0.92,0.92 0 0 1 42.12,51.86 Z" />
 </vector>
